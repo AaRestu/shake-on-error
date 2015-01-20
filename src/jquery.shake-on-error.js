@@ -73,9 +73,24 @@
                         jQuery.fn.addClass = function () {
                             // Execute the original method.
                             var result = originalAddClassMethod.apply(this, arguments);
-                            check(opt, function () {
-                                shake(opt);
-                            });
+
+                            //memastikan jika harus di periksa
+                            var periksa = false;
+                            for(var i = 0; i < opt.selector_error.length; i++ ) {
+                                var selector = typeof(opt.selector_error[i]) == 'string' ? opt.selector_error[i] : '';
+                                if(typeof(opt.selector_error[i]) == 'object' && typeof(opt.selector_error[i].selector) == 'string') {
+                                    selector = opt.selector_error[i].selector;
+                                }
+
+                                if(selector == '.' + arguments[0]) {
+                                    periksa = true;
+                                }
+                            }
+                            if(periksa) {
+                                check(opt, function () {
+                                    shake(opt);
+                                });
+                            }
 
                             // return the original result
                             return result;
@@ -112,23 +127,37 @@
             },
             shake = function(opt) {
                 kocok = true;
+                var selected_shake_position;
+                var selector_position;
                 setTimeout(function() {
                     if(kocok) {
                         opt.before_kocok();
 
+                        if(shake_current_selector) {
+                            selected_shake_position = $(selected_shake.join(', ')).css('position');
+                            $(selected_shake.join(', ')).css('position', 'relative');
+                        }
+                        selector_position = $(opt.selector).css('position');
+                        $(opt.selector).css('position', 'relative');
+
                         for (var i = 0; i < opt.jml_kocok; i++) {
                             var jarak_kocok = (i % 2 == 0) ? opt.jarak_kocok : -opt.jarak_kocok;
                             if(shake_current_selector) {
-                                $(selected_shake.join(', ')).animate({ 'margin-left': "+=" + jarak_kocok + 'px' }, duration_per_kocok);
+                                $(selected_shake.join(', ')).animate({ 'left': "+=" + jarak_kocok + 'px' }, duration_per_kocok);
                             }
-                            $(opt.selector).animate({ 'margin-left': "+=" + jarak_kocok + 'px' }, duration_per_kocok);
+                            $(opt.selector).animate({ 'left': "+=" + jarak_kocok + 'px' }, duration_per_kocok);
                         }
 
 
                         setTimeout(function() {
+                            if(shake_current_selector) {
+                                $(selected_shake.join(', ')).css('position', selected_shake_position);
+                            }
+                            $(opt.selector).css('position', selector_position);
                             shake_current_selector = false;
                             selected_shake = [];
                             opt.after_kocok();
+
                         }, duration_per_kocok * opt.jml_kocok + opt.duration);
                     }
                     kocok = false;
@@ -138,15 +167,23 @@
 
             };
 
-        Array.prototype.inArray = function(comparer) {
+        Array.prototype.inArray = function(element, comparer) {
             for(var i=0; i < this.length; i++) {
-                if(comparer(this[i])) return true;
+                if(typeof(comparer) == 'function' && comparer(this[i])) {
+                    return true;
+                } else if($(this).get(i) == element) {
+                    return true;
+                }
+                else {
+
+                }
+                console.log(this);
             }
             return false;
         };
 
         Array.prototype.pushIfNotExist = function(element, comparer) {
-            if (!this.inArray(comparer)) {
+            if (!this.inArray(element, comparer)) {
                 this.push(element);
             }
         };
