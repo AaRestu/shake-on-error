@@ -201,7 +201,7 @@
         };
     }();
     $.fn.extend({
-        ShakeOnError: ShakeOnError.init,
-        Shake : ShakeOnError.shake
+        shakeOnError: ShakeOnError.init,
+        shake : ShakeOnError.shake
     });
 })(jQuery)
