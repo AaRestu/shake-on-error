@@ -1,0 +1,15 @@
+.panel-body {
+    padding-top:30px;
+}
+
+#login-box {
+	margin-top: 100px;
+}
+
+#login-alert {
+    display : none;
+}
+
+.form-group {
+	margin: 0 0 25px 0 !important;       
+}
