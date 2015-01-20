@@ -44,7 +44,6 @@
                             if(typeof(opt.selector_error[i]) == 'object' && typeof(opt.selector_error[i].selector) == 'string' && typeof(opt.selector_error[i].shake_current_selector) == 'boolean') {
                                 shake_current_selector = true;
                                 selected_shake.pushIfNotExist(opt.selector_error[i].selector);
-                                console.log(selected_shake.join(','));
                             }
                         }
 
@@ -174,10 +173,6 @@
                 } else if($(this).get(i) == element) {
                     return true;
                 }
-                else {
-
-                }
-                console.log(this);
             }
             return false;
         };
